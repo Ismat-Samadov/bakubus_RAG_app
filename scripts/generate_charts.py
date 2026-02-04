@@ -94,70 +94,59 @@ def chart1_route_efficiency_ranking(df):
     plt.close()
     print("  ✓ Saved: 01_route_efficiency_ranking.png")
 
-def chart2_bottom_performers(df):
-    """Bottom 15 Slowest Routes - Optimization Opportunities"""
-    print("Generating Chart 2: Routes Requiring Optimization...")
+def chart2_longest_journeys(df):
+    """Routes with Longest Journey Times - Resource Intensity Analysis"""
+    print("Generating Chart 2: Longest Journey Times...")
 
-    bottom_15 = df.nsmallest(15, 'avg_speed_kmh')[['bus_number', 'avg_speed_kmh']].sort_values('avg_speed_kmh', ascending=False)
+    top_15 = df.nlargest(15, 'duration_min')[['bus_number', 'duration_min', 'route_length_km']].sort_values('duration_min')
 
     fig, ax = plt.subplots(figsize=(12, 8))
-    bars = ax.barh(range(len(bottom_15)), bottom_15['avg_speed_kmh'].values, color='#e74c3c')
-    ax.set_yticks(range(len(bottom_15)))
-    ax.set_yticklabels([f"Bus {num}" for num in bottom_15['bus_number'].values])
-    ax.set_xlabel('Average Speed (km/h)')
-    ax.set_title('Bottom 15 Slowest Routes - Priority Optimization Candidates', fontweight='bold', pad=20)
+    bars = ax.barh(range(len(top_15)), top_15['duration_min'].values, color='#e74c3c')
+    ax.set_yticks(range(len(top_15)))
+    ax.set_yticklabels([f"Bus {num}" for num in top_15['bus_number'].values])
+    ax.set_xlabel('Journey Time (minutes)')
+    ax.set_title('Top 15 Longest Journey Times - Resource Intensive Routes', fontweight='bold', pad=20)
     ax.grid(axis='x', alpha=0.3)
 
-    # Add value labels
-    for i, (idx, row) in enumerate(bottom_15.iterrows()):
-        ax.text(row['avg_speed_kmh'] + 0.3, i, f"{row['avg_speed_kmh']:.1f}", va='center')
+    # Add value labels with distance
+    for i, (idx, row) in enumerate(top_15.iterrows()):
+        ax.text(row['duration_min'] + 2, i, f"{int(row['duration_min'])} min\n({row['route_length_km']:.1f} km)",
+                va='center', fontsize=9)
 
     plt.tight_layout()
-    plt.savefig(CHARTS_DIR / '02_bottom_performers.png', dpi=300, bbox_inches='tight')
+    plt.savefig(CHARTS_DIR / '02_longest_journeys.png', dpi=300, bbox_inches='tight')
     plt.close()
-    print("  ✓ Saved: 02_bottom_performers.png")
+    print("  ✓ Saved: 02_longest_journeys.png")
 
-def chart3_carrier_performance(df):
-    """Carrier Market Share and Performance"""
-    print("Generating Chart 3: Carrier Analysis...")
+def chart3_top_carriers(df):
+    """Top 10 Carriers - Market Leaders"""
+    print("Generating Chart 3: Top 10 Carriers Analysis...")
 
     carrier_stats = df.groupby('carrier').agg({
         'bus_number': 'count',
         'route_length_km': 'sum',
         'avg_speed_kmh': 'mean'
     }).round(2)
-    carrier_stats.columns = ['Routes Operated', 'Total Coverage (km)', 'Avg Speed (km/h)']
-    carrier_stats = carrier_stats.sort_values('Routes Operated', ascending=False)
+    carrier_stats.columns = ['Routes', 'Coverage_km', 'Avg_Speed']
+    top_10 = carrier_stats.nlargest(10, 'Routes').sort_values('Routes')
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+    fig, ax = plt.subplots(figsize=(12, 8))
+    bars = ax.barh(range(len(top_10)), top_10['Routes'].values, color='#3498db')
+    ax.set_yticks(range(len(top_10)))
+    ax.set_yticklabels(top_10.index)
+    ax.set_xlabel('Number of Routes Operated', fontweight='bold')
+    ax.set_title('Top 10 Carriers by Routes Operated - Market Share Leaders', fontweight='bold', pad=20)
+    ax.grid(axis='x', alpha=0.3)
 
-    # Chart 3a: Number of routes by carrier
-    ax1.bar(range(len(carrier_stats)), carrier_stats['Routes Operated'].values, color='#3498db')
-    ax1.set_xticks(range(len(carrier_stats)))
-    ax1.set_xticklabels(carrier_stats.index, rotation=45, ha='right')
-    ax1.set_ylabel('Number of Routes')
-    ax1.set_title('Routes Operated by Carrier', fontweight='bold')
-    ax1.grid(axis='y', alpha=0.3)
+    # Add value labels
+    for i, (carrier, row) in enumerate(top_10.iterrows()):
+        ax.text(row['Routes'] + 0.5, i, f"{int(row['Routes'])} routes\n{row['Coverage_km']:.0f} km",
+                va='center', fontsize=9)
 
-    for i, val in enumerate(carrier_stats['Routes Operated'].values):
-        ax1.text(i, val + 1, str(int(val)), ha='center', va='bottom', fontweight='bold')
-
-    # Chart 3b: Total coverage by carrier
-    ax2.bar(range(len(carrier_stats)), carrier_stats['Total Coverage (km)'].values, color='#9b59b6')
-    ax2.set_xticks(range(len(carrier_stats)))
-    ax2.set_xticklabels(carrier_stats.index, rotation=45, ha='right')
-    ax2.set_ylabel('Total Route Length (km)')
-    ax2.set_title('Network Coverage by Carrier', fontweight='bold')
-    ax2.grid(axis='y', alpha=0.3)
-
-    for i, val in enumerate(carrier_stats['Total Coverage (km)'].values):
-        ax2.text(i, val + 20, f"{val:.0f}", ha='center', va='bottom', fontweight='bold')
-
-    plt.suptitle('Carrier Performance Overview', fontsize=16, fontweight='bold', y=1.02)
     plt.tight_layout()
-    plt.savefig(CHARTS_DIR / '03_carrier_performance.png', dpi=300, bbox_inches='tight')
+    plt.savefig(CHARTS_DIR / '03_top_carriers.png', dpi=300, bbox_inches='tight')
     plt.close()
-    print("  ✓ Saved: 03_carrier_performance.png")
+    print("  ✓ Saved: 03_top_carriers.png")
 
 def chart4_route_length_distribution(df):
     """Route Length Categories - Service Design Analysis"""
@@ -481,8 +470,8 @@ def main():
     print("-" * 70)
 
     chart1_route_efficiency_ranking(df)
-    chart2_bottom_performers(df)
-    chart3_carrier_performance(df)
+    chart2_longest_journeys(df)
+    chart3_top_carriers(df)
     chart4_route_length_distribution(df)
     chart5_stop_density_analysis(df)
     chart6_duration_vs_distance(df)

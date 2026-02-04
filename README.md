@@ -25,10 +25,10 @@
 
 ### 1. Route Efficiency Performance
 
-**Chart Reference:** `01_route_efficiency_ranking.png`
+![Top Performing Routes](charts/01_route_efficiency_ranking.png)
 
 **What the Data Shows:**
-The top 15 fastest routes achieve speeds between 39-41 km/h, with Bus 519 leading at 41.4 km/h.
+The top 15 fastest routes achieve speeds between 36.7-41.4 km/h, with Bus 519 leading at 41.4 km/h.
 
 **Why This Matters:**
 - These routes represent operational excellence and serve as benchmarks
@@ -40,37 +40,39 @@ Study the characteristics of top performers (routing, scheduling, stop spacing) 
 
 ---
 
-### 2. Optimization Opportunities
+### 2. Resource-Intensive Routes
 
-**Chart Reference:** `02_bottom_performers.png`
+![Longest Journey Times](charts/02_longest_journeys.png)
 
 **What the Data Shows:**
-The 15 slowest routes operate at 36 km/h, with Bus 1 at the bottom.
+The 15 routes with longest journey times range from 115-218 minutes, with some covering distances up to 131 km.
 
 **Why This Matters:**
-- Speed gaps represent efficiency losses and extended journey times
-- Slower routes increase operational costs and reduce vehicle utilization
-- Customer experience suffers on routes with prolonged travel times
+- Longer journeys tie up vehicles and drivers for extended periods
+- These routes require more operational resources (fuel, maintenance, labor)
+- Extended journey times increase risk of delays and service disruptions
+- High resource intensity directly impacts profitability per route
 
 **Business Action:**
-**Priority:** Conduct route audits for the bottom 15 routes. Investigate traffic bottlenecks, excessive stops, or routing inefficiencies. Consider route redesign or express variants.
+**Priority:** Evaluate whether ultra-long routes (131+ km, 3+ hours) should be split into segments with transfer points. This improves vehicle utilization and service frequency.
 
 ---
 
 ### 3. Carrier Market Dynamics
 
-**Chart Reference:** `03_carrier_performance.png`
+![Top 10 Carriers](charts/03_top_carriers.png)
 
 **What the Data Shows:**
-BakuBus MMC dominates with the most routes and network coverage, followed by multiple smaller carriers.
+BakuBus MMC dominates with 55 routes covering 2,466 km, significantly ahead of second-place carriers operating 18-19 routes each.
 
 **Why This Matters:**
-- Market concentration affects service standardization and quality control
+- Extreme market concentration (one carrier operates 26% of all routes)
+- Top 3 carriers control nearly 45% of the network
 - Smaller carriers may offer flexibility but lack economies of scale
-- Contract negotiations and service level agreements vary significantly
+- Service quality and standardization depends heavily on one dominant operator
 
 **Business Action:**
-- **Strategic Partnership:** Consider consolidating services with top-performing carriers
+- **Risk Mitigation:** Reduce dependency on single carrier through strategic diversification
 - **Quality Standards:** Implement consistent KPIs across all operators
 - **Performance Incentives:** Link carrier compensation to speed and reliability metrics
 
@@ -296,6 +298,5 @@ For detailed charts, refer to the `/charts` directory.
 
 ---
 
-**Report Prepared For:** Executive Leadership & Operations Management
-**Prepared By:** Business Intelligence Team
-**Classification:** Internal Use - Strategic Planning
+- **Report Prepared For:** Executive Leadership & Operations Management
+- **Classification:** Internal Use - Strategic Planning
