@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bus Route Analytics Dashboard
+
+An advanced, interactive Next.js dashboard for analyzing and visualizing Baku's public bus transport network.
+
+## Features
+
+- **Interactive Map Visualization**: Advanced Leaflet-based map showing all bus routes with color-coded performance indicators
+- **Real-time Filtering**: Filter routes by carrier, region, speed, length, and more
+- **Performance Analytics**: Comprehensive KPIs including speed, coverage, efficiency metrics
+- **Strategic Insights**: Business intelligence charts for carrier performance, route distribution, and network optimization
+- **Responsive Design**: Fully responsive interface that works on desktop, tablet, and mobile
+- **Route Details**: Detailed view of individual routes with stops, coordinates, and performance data
+
+## Tech Stack
+
+- **Framework**: Next.js 15+ with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Maps**: React Leaflet
+- **Charts**: Recharts
+- **State Management**: Zustand
+- **Icons**: Lucide React
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
+- Node.js 18.x or higher
+- npm or yarn
+
+### Installation
+
+1. Install dependencies:
+\`\`\`bash
+npm install
+\`\`\`
+
+2. Run the development server:
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Method 1: Using Vercel CLI
 
-## Learn More
+1. Install Vercel CLI:
+\`\`\`bash
+npm i -g vercel
+\`\`\`
 
-To learn more about Next.js, take a look at the following resources:
+2. Login to Vercel:
+\`\`\`bash
+vercel login
+\`\`\`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Deploy:
+\`\`\`bash
+vercel
+\`\`\`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For production deployment:
+\`\`\`bash
+vercel --prod
+\`\`\`
 
-## Deploy on Vercel
+### Method 2: Using Vercel Dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push your code to GitHub/GitLab/Bitbucket
+2. Visit [vercel.com](https://vercel.com)
+3. Click "Add New Project"
+4. Import your repository
+5. Configure project settings (Vercel will auto-detect Next.js)
+6. Click "Deploy"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Data Structure
+
+The dashboard processes the following bus route data:
+- 208 bus routes
+- 11,786 stops
+- 7,745 km total network coverage
+- Route coordinates, speeds, carriers, and performance metrics
+
+## Key Features
+
+### Interactive Map
+- Click on any route to see detailed information
+- Routes color-coded by speed (green = fast, yellow = medium, red = slow)
+- View stops and transport hubs
+- Zoom and pan to explore the network
+
+### Filtering System
+- Filter by carrier (top 10 carriers available)
+- Filter by region
+- Filter by speed range
+- Filter by route length
+- Combine multiple filters for precise analysis
+
+### Analytics Charts
+- Speed Distribution
+- Route Length Distribution
+- Top Carriers Performance
+
+---
+
+**Built with** Next.js, React, TypeScript, Tailwind CSS, Leaflet, and Recharts
