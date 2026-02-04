@@ -89,18 +89,19 @@ export default function RouteMap({ routes, selectedRoute, onRouteClick }: RouteM
         .slice(0, 30); // Limit to 30 routes for better initial performance
 
   return (
-    <MapContainer
-      center={BAKU_CENTER}
-      zoom={11}
-      style={{ height: "100%", width: "100%" }}
-      className="z-0"
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+    <div className="relative w-full h-full">
+      <MapContainer
+        center={BAKU_CENTER}
+        zoom={11}
+        style={{ height: "100%", width: "100%" }}
+        className="z-0"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
 
-      <MapUpdater routes={displayRoutes} />
+        <MapUpdater routes={displayRoutes} />
 
       {displayRoutes.map((route) => {
         // Draw route polylines from flowCoordinates
@@ -146,30 +147,75 @@ export default function RouteMap({ routes, selectedRoute, onRouteClick }: RouteM
         });
 
         // Draw stops as markers (only for selected route to avoid clutter)
-        const stopMarkers = selectedRoute && route.stops?.map((stop) => {
+        const stopMarkers = selectedRoute && route.stops?.map((stop, stopIdx) => {
           const lat = parseFloat(stop.stop?.latitude || "0");
           const lon = parseFloat(stop.stop?.longitude || "0");
 
           if (!lat || !lon || isNaN(lat) || isNaN(lon) || lat === 0 || lon === 0) return null;
 
+          const isHub = stop.stop?.isTransportHub;
+          const isFirst = stopIdx === 0;
+          const isLast = stopIdx === (route.stops?.length || 0) - 1;
+
+          // Larger and more visible markers
+          const markerSize = isHub ? 24 : isFirst || isLast ? 20 : 16;
+          const bgColor = isHub ? "#ef4444" : isFirst ? "#10b981" : isLast ? "#f59e0b" : "#3b82f6";
+          const pulseAnimation = (isHub || isFirst || isLast) ? `
+            @keyframes pulse {
+              0%, 100% { transform: scale(1); opacity: 1; }
+              50% { transform: scale(1.2); opacity: 0.8; }
+            }
+          ` : '';
+
           const icon = L.divIcon({
-            className: "custom-div-icon",
-            html: `<div style="background-color: ${stop.stop?.isTransportHub ? "#ef4444" : "#3b82f6"}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>`,
-            iconSize: [12, 12],
-            iconAnchor: [6, 6],
+            className: "custom-stop-marker",
+            html: `
+              <style>
+                ${pulseAnimation}
+                .marker-outer {
+                  animation: ${(isHub || isFirst || isLast) ? 'pulse 2s ease-in-out infinite' : 'none'};
+                }
+              </style>
+              <div class="marker-outer" style="
+                background-color: ${bgColor};
+                width: ${markerSize}px;
+                height: ${markerSize}px;
+                border-radius: 50%;
+                border: 3px solid white;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 2px ${bgColor}40;
+                cursor: pointer;
+                transition: all 0.2s ease;
+              "></div>
+            `,
+            iconSize: [markerSize, markerSize],
+            iconAnchor: [markerSize / 2, markerSize / 2],
           });
 
           return (
             <Marker key={stop.id} position={[lat, lon]} icon={icon}>
               <Popup>
-                <div className="p-1">
-                  <h4 className="font-semibold">{stop.stop?.name}</h4>
-                  <p className="text-xs text-gray-600">
-                    {stop.totalDistance.toFixed(1)} km from start
-                  </p>
-                  {stop.stop?.isTransportHub && (
-                    <p className="text-xs text-red-600 font-semibold mt-1">Transport Hub</p>
-                  )}
+                <div className="p-2 min-w-[200px]">
+                  <h4 className="font-bold text-gray-900 mb-2">{stop.stop?.name}</h4>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-600">
+                      <span className="font-semibold">Distance:</span> {stop.totalDistance.toFixed(1)} km from start
+                    </p>
+                    {isFirst && (
+                      <p className="text-xs text-green-600 font-semibold bg-green-50 px-2 py-1 rounded">
+                        🚩 Starting Point
+                      </p>
+                    )}
+                    {isLast && (
+                      <p className="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-1 rounded">
+                        🏁 End Point
+                      </p>
+                    )}
+                    {isHub && (
+                      <p className="text-xs text-red-600 font-semibold bg-red-50 px-2 py-1 rounded">
+                        🔄 Transport Hub
+                      </p>
+                    )}
+                  </div>
                 </div>
               </Popup>
             </Marker>
@@ -183,7 +229,33 @@ export default function RouteMap({ routes, selectedRoute, onRouteClick }: RouteM
           </div>
         );
       })}
-    </MapContainer>
+      </MapContainer>
+
+      {/* Map Legend */}
+      {selectedRoute && (
+        <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-lg p-3 z-[1000] max-w-[200px]">
+          <h4 className="text-xs font-bold text-gray-900 mb-2">Stop Types</h4>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-green-500 border-2 border-white shadow-md flex-shrink-0"></div>
+              <span className="text-xs text-gray-700">Start Point</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-orange-500 border-2 border-white shadow-md flex-shrink-0"></div>
+              <span className="text-xs text-gray-700">End Point</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-red-500 border-2 border-white shadow-md flex-shrink-0"></div>
+              <span className="text-xs text-gray-700">Transport Hub</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-md flex-shrink-0"></div>
+              <span className="text-xs text-gray-700">Regular Stop</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
